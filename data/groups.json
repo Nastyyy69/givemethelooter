@@ -1,0 +1,9 @@
+[
+  {
+    "id": "default",
+    "name": "Основная группа",
+    "farmingAccounts": [],
+    "storageAccounts": [],
+    "proxy": ""
+  }
+]

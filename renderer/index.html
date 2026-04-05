@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; img-src 'self' https://community.akamai.steamstatic.com data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com">
+    <title>GMT Looter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+    <!-- ── Шапка ──────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <span class="app-title">GMT Looter</span>
+        <span class="app-sub">CS2 Drop Distribution</span>
+        <div class="header-links">
+            <button class="dev-link" id="link-nasty">NASTY</button>
+            <button class="dev-link" id="link-disa">DISA</button>
+        </div>
+        <button class="theme-toggle" id="btn-theme" title="Переключить тему">🌙</button>
+    </header>
+
+    <!-- ── Аккаунты (workspace) ───────────────────────────────────────── -->
+    <div class="workspace-row">
+
+        <!-- Боковая панель групп -->
+        <aside class="groups-panel">
+            <div class="groups-head">
+                <span class="panel-title">Папки</span>
+                <button class="btn-icon" id="btn-new-group" title="Создать папку">+</button>
+            </div>
+            <div class="groups-list" id="groups-list"></div>
+            <!-- Inline форма создания группы -->
+            <div class="group-create-form hidden" id="group-create-form">
+                <div class="group-create-row">
+                    <input type="text" id="group-create-input"
+                           class="group-name-input" placeholder="Название папки...">
+                    <button class="btn-icon-sm confirm" id="group-create-confirm">✓</button>
+                    <button class="btn-icon-sm cancel"  id="group-create-cancel">✕</button>
+                </div>
+                <input type="text" id="group-create-proxy"
+                       class="proxy-input" placeholder="Прокси (необязательно): ip:port или ip:port:user:pass">
+            </div>
+            <!-- Прокси для активной группы -->
+            <div class="proxy-block" id="proxy-block">
+                <div class="proxy-label">Прокси группы</div>
+                <input type="text" id="proxy-input" class="proxy-input"
+                       placeholder="ip:port или ip:port:user:pass">
+                <div class="proxy-hint">Применяется к фарм аккаунтам</div>
+            </div>
+        </aside>
+
+        <!-- Фарм аккаунты -->
+        <section class="panel">
+            <div class="panel-head">
+                <span class="panel-title">Фарм аккаунты</span>
+                <span class="badge" id="farming-count">0</span>
+                <button class="btn-delete-accs hidden" id="btn-delete-farming">🗑 <span id="farming-del-count">0</span></button>
+            </div>
+            <div class="panel-actions">
+                <button class="btn btn-primary" id="btn-import-farming-txt">Импорт TXT</button>
+                <button class="btn btn-ghost"   id="btn-open-farming-mafiles">Папка maFile</button>
+            </div>
+            <div class="account-list" id="farming-list">
+                <div class="empty">Выберите папку слева</div>
+            </div>
+        </section>
+
+        <!-- Аккаунты хранилища -->
+        <section class="panel">
+            <div class="panel-head">
+                <span class="panel-title">Аккаунты хранилища</span>
+                <span class="badge" id="storage-count">0</span>
+                <button class="btn-delete-accs hidden" id="btn-delete-storage">🗑 <span id="storage-del-count">0</span></button>
+            </div>
+            <div class="panel-actions">
+                <button class="btn btn-primary" id="btn-import-storage-txt">Импорт TXT</button>
+                <button class="btn btn-ghost"   id="btn-open-storage-mafiles">Папка maFile</button>
+            </div>
+            <div class="account-list" id="storage-list">
+                <div class="empty">Выберите папку слева</div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ── Предметы ────────────────────────────────────────────────────── -->
+    <section class="items-section">
+        <div class="items-head">
+            <span class="panel-title">Доступные предметы</span>
+            <div class="items-controls">
+                <label class="toggle-wrap" title="Использовать только половину предметов хранилища">
+                    <input type="checkbox" id="toggle-div2" checked>
+                    <span class="toggle-label">Делить на 2</span>
+                </label>
+                <span class="items-stats" id="items-stats"></span>
+                <button class="btn btn-primary"  id="btn-fetch-items">Получить предметы</button>
+                <button class="btn btn-save"     id="btn-save-selection" disabled title="Сохранить выбор скинов для этой папки">💾 Сохранить выбор</button>
+                <button class="btn btn-success"  id="btn-create-trades" disabled>Создать трейды</button>
+                <button class="btn btn-collect"  id="btn-collect-direct">⬇ Собрать без залога</button>
+                <button class="btn btn-run-all"  id="btn-run-all">▶ Все папки</button>
+            </div>
+        </div>
+        <div class="items-grid" id="items-grid">
+            <div class="empty">Нажмите «Получить предметы»</div>
+        </div>
+    </section>
+
+    <!-- ── Лог ────────────────────────────────────────────────────────── -->
+    <section class="log-section">
+        <div class="log-head">
+            <span class="panel-title">Лог</span>
+            <button class="btn btn-xs" id="btn-clear-log">Очистить</button>
+        </div>
+        <div class="log-body" id="log-body"></div>
+    </section>
+
+</div>
+<script src="renderer.js"></script>
+</body>
+</html>
