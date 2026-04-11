@@ -1,11 +1,45 @@
 const fs   = require('fs');
 const path = require('path');
+const { app } = require('electron');
 
-const DATA_FILE = path.join(__dirname, '..', 'data', 'groups.json');
-const DATA_DIR  = path.join(__dirname, '..', 'data');
+const DEFAULT_GROUPS = [
+    { id: 'default', name: 'Основная группа', farmingAccounts: [], storageAccounts: [] }
+];
+
+function getDefaultGroups() {
+    return DEFAULT_GROUPS.map(group => ({
+        ...group,
+        farmingAccounts: [...group.farmingAccounts],
+        storageAccounts: [...group.storageAccounts]
+    }));
+}
+
+function getBundledDataDir() {
+    return path.join(__dirname, '..', 'data');
+}
+
+function getWritableDataDir() {
+    if (app && app.isPackaged) {
+        return path.join(app.getPath('userData'), 'data');
+    }
+    return getBundledDataDir();
+}
+
+function getDataFile() {
+    return path.join(getWritableDataDir(), 'groups.json');
+}
+
+function seedPackagedDataDir(targetDir) {
+    const sourceFile = path.join(getBundledDataDir(), 'groups.json');
+    const targetFile = path.join(targetDir, 'groups.json');
+    if (!app || !app.isPackaged || !fs.existsSync(sourceFile) || fs.existsSync(targetFile)) return;
+    fs.copyFileSync(sourceFile, targetFile);
+}
 
 function ensureDir() {
-    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    const dataDir = getWritableDataDir();
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+    seedPackagedDataDir(dataDir);
 }
 
 function generateId() {
@@ -16,13 +50,14 @@ function generateId() {
 
 function loadGroups() {
     ensureDir();
-    if (!fs.existsSync(DATA_FILE)) {
-        const def = [{ id: 'default', name: 'Основная группа', farmingAccounts: [], storageAccounts: [] }];
-        fs.writeFileSync(DATA_FILE, JSON.stringify(def, null, 2));
-        return def;
+    const dataFile = getDataFile();
+    if (!fs.existsSync(dataFile)) {
+        const groups = getDefaultGroups();
+        fs.writeFileSync(dataFile, JSON.stringify(groups, null, 2));
+        return groups;
     }
     try {
-        return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+        return JSON.parse(fs.readFileSync(dataFile, 'utf8'));
     } catch {
         return [];
     }
@@ -30,7 +65,7 @@ function loadGroups() {
 
 function saveGroups(groups) {
     ensureDir();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(groups, null, 2));
+    fs.writeFileSync(getDataFile(), JSON.stringify(groups, null, 2));
 }
 
 function getGroup(groups, id) {
