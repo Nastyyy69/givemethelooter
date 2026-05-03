@@ -20,6 +20,8 @@ function getBundledDataDir() {
 
 function getWritableDataDir() {
     if (app && app.isPackaged) {
+        const portableDir = process.env.PORTABLE_EXECUTABLE_DIR;
+        if (portableDir) return path.join(portableDir, 'data');
         return path.join(app.getPath('userData'), 'data');
     }
     return getBundledDataDir();
@@ -29,17 +31,9 @@ function getDataFile() {
     return path.join(getWritableDataDir(), 'groups.json');
 }
 
-function seedPackagedDataDir(targetDir) {
-    const sourceFile = path.join(getBundledDataDir(), 'groups.json');
-    const targetFile = path.join(targetDir, 'groups.json');
-    if (!app || !app.isPackaged || !fs.existsSync(sourceFile) || fs.existsSync(targetFile)) return;
-    fs.copyFileSync(sourceFile, targetFile);
-}
-
 function ensureDir() {
     const dataDir = getWritableDataDir();
     if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    seedPackagedDataDir(dataDir);
 }
 
 function generateId() {
